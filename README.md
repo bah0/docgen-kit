@@ -66,6 +66,8 @@ flowchart LR
 
 ## Install
 
+> **docgen-kit is not on npm yet.** Until it is published, clone the repository, build it (`npm install && npm run build`) and install it from the local folder: `npm install /path/to/docgen-kit`. The commands below show the intended usage once it is published.
+
 ```bash
 npm install docgen-kit
 ```

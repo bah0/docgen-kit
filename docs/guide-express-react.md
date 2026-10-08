@@ -4,6 +4,8 @@ This guide builds a small app from scratch: an **Express** backend that renders 
 
 All data in the examples is fictional.
 
+> docgen-kit is not on npm yet. Where the guide says `npm install docgen-kit`, install it from a local clone instead (see [Install](../README.md#install)).
+
 ## Contents
 
 1. [Prerequisites](#1-prerequisites)
