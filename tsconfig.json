@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "verbatimModuleSyntax": false,
+    "jsx": "react-jsx",
+    "types": ["node"]
+  },
+  "include": ["src", "test", "scripts", "tsup.config.ts", "vitest.config.ts"],
+  "exclude": ["node_modules", "dist", "demo"]
+}

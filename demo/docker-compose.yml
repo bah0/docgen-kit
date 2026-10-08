@@ -1,0 +1,18 @@
+# Gotenberg v8 (headless Chromium) for PDF generation.
+# Start:  docker compose up -d
+# Check:  curl http://localhost:3011/health
+services:
+  gotenberg:
+    image: gotenberg/gotenberg:8
+    container_name: pdf-gen-gotenberg
+    restart: unless-stopped
+    ports:
+      # Host port 3011 -> container port 3000 (Next.js runs on 3010)
+      - "3011:3000"
+    command:
+      - "gotenberg"
+      # Documents need no JavaScript; templates are freely editable, so disable it.
+      - "--chromium-disable-javascript=true"
+      # No access to loopback/RFC1918 targets from within the template (SSRF protection).
+      - "--chromium-deny-private-ips=true"
+      - "--api-timeout=30s"

@@ -1,0 +1,130 @@
+{
+  "name": "docgen-kit",
+  "version": "0.9.2",
+  "description": "Template-driven PDF documents: Handlebars templates, a live A4 preview, Gotenberg PDF rendering and fillable AcroForm fields. Framework-agnostic core, plus server, client and Lexical/React bindings.",
+  "keywords": [
+    "pdf",
+    "handlebars",
+    "gotenberg",
+    "acroform",
+    "lexical",
+    "document-generation",
+    "invoice"
+  ],
+  "license": "MIT",
+  "author": "Bahadir Parmaksiz <parmaksiz.bahadir@gmail.com>",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./server": {
+      "import": {
+        "types": "./dist/server.d.ts",
+        "default": "./dist/server.js"
+      },
+      "require": {
+        "types": "./dist/server.d.cts",
+        "default": "./dist/server.cjs"
+      }
+    },
+    "./client": {
+      "import": {
+        "types": "./dist/client.d.ts",
+        "default": "./dist/client.js"
+      },
+      "require": {
+        "types": "./dist/client.d.cts",
+        "default": "./dist/client.cjs"
+      }
+    },
+    "./react": {
+      "import": {
+        "types": "./dist/react.d.ts",
+        "default": "./dist/react.js"
+      },
+      "require": {
+        "types": "./dist/react.d.cts",
+        "default": "./dist/react.cjs"
+      }
+    },
+    "./styles.css": "./dist/document.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "workspaces": [
+    "demo"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "gen:css": "node scripts/gen-css.mjs",
+    "prepare": "npm run gen:css",
+    "build": "npm run gen:css && tsup",
+    "dev": "tsup --watch",
+    "typecheck": "npm run gen:css && tsc --noEmit",
+    "lint": "eslint src test scripts",
+    "test": "npm run gen:css && vitest run",
+    "test:watch": "npm run gen:css && vitest",
+    "check": "npm run typecheck && npm run lint && npm test && npm run build",
+    "demo": "npm run build && npm run dev -w demo"
+  },
+  "dependencies": {
+    "handlebars": "^4.7.10"
+  },
+  "peerDependencies": {
+    "@lexical/html": "^0.52.0",
+    "@lexical/react": "^0.52.0",
+    "lexical": "^0.52.0",
+    "pdf-lib": "^1.17.1",
+    "react": ">=19"
+  },
+  "peerDependenciesMeta": {
+    "@lexical/html": {
+      "optional": true
+    },
+    "@lexical/react": {
+      "optional": true
+    },
+    "lexical": {
+      "optional": true
+    },
+    "pdf-lib": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^9",
+    "@lexical/html": "^0.52.0",
+    "@lexical/react": "^0.52.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "eslint": "^9",
+    "lexical": "^0.52.0",
+    "pdf-lib": "^1.17.1",
+    "react": "19.3.0",
+    "tsup": "^8",
+    "typescript": "^5",
+    "typescript-eslint": "^8",
+    "vitest": "^3"
+  }
+}

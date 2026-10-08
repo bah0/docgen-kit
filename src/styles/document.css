@@ -1,0 +1,555 @@
+/* ==========================================================================
+   styles/document.css – ONE stylesheet for live preview AND PDF
+
+   The server (Gotenberg/Chromium) and the iframe in the browser receive
+   exactly this file inline in the <style> tag. This keeps fonts, spacing and
+   break rules identical in both paths.
+
+   HOW PAGE BREAKS WORK
+   - In the PDF (@media print) Chromium splits the content into A4 pages
+     automatically. A page's content area is 297mm - 2 x 20mm = 257mm tall and
+     210mm - 2 x 15mm = 180mm wide (see @page).
+   - Breaks happen on their own once the space is used up ("flow"). The helper
+     classes below let you control them:
+       .page-break-before / .page-break-after  -> forced break
+       .avoid-break                            -> do not split the block
+       thead { display: table-header-group }   -> repeat the table header
+       tr { break-inside: avoid }              -> do not split rows
+   - The preview (@media screen) has no real pages. There the flow is laid out
+     in columns (one column = content area of a page, same break rules) and
+     A4 sheets with the real margins are built from it
+     (components/preview/paginate.ts). The script repeats table headers there.
+   ========================================================================== */
+
+/* --- 1. Paper size and page margins (print/PDF only) ---------------------- */
+@page {
+  size: A4 portrait;
+  margin: 20mm 15mm 20mm 15mm;
+}
+
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* Page Break Helpers */
+.page-break-before {
+  page-break-before: always;
+  break-before: page;
+}
+
+.page-break-after {
+  page-break-after: always;
+  break-after: page;
+}
+
+.avoid-break {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* Repeating Headers for Dynamic Flow Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  display: table-header-group; /* Repeats table header across pages in PDF */
+}
+
+tfoot {
+  display: table-footer-group;
+}
+
+tr {
+  page-break-inside: avoid;
+}
+
+/* --- 2. Typography (Arial/Liberation Sans: same metrics in browser and Gotenberg) --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: Arial, "Liberation Sans", Helvetica, sans-serif;
+  font-size: 10pt;
+  line-height: 1.45;
+  color: #111827;
+}
+
+body {
+  margin: 0;
+}
+
+.document h1 {
+  margin: 0 0 6mm;
+  font-size: 20pt;
+  line-height: 1.2;
+}
+
+.document h2 {
+  margin: 7mm 0 2.5mm;
+  font-size: 13pt;
+  line-height: 1.25;
+  break-after: avoid; /* heading never alone at the bottom of a page */
+  page-break-after: avoid;
+}
+
+.document h3 {
+  margin: 5mm 0 2mm;
+  font-size: 11pt;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+.document p {
+  margin: 0 0 3mm;
+  orphans: 3; /* at least 3 lines at the bottom of a page ... */
+  widows: 3; /* ... and 3 lines at the top of a page */
+}
+
+.document ul,
+.document ol {
+  margin: 0 0 3mm;
+  padding-left: 6mm;
+}
+
+.document img {
+  max-width: 100%;
+  height: auto;
+}
+
+.document li {
+  margin-bottom: 1mm;
+}
+
+.muted {
+  color: #6b7280;
+}
+
+.small {
+  font-size: 8pt;
+}
+
+.num {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- 3. Building blocks (letterhead, tables, totals, signatures) ---------- */
+.letterhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10mm;
+  margin-bottom: 8mm;
+  padding-bottom: 4mm;
+  border-bottom: 0.4mm solid #111827;
+}
+
+.letterhead .brand {
+  font-size: 16pt;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.letterhead .contact {
+  text-align: right;
+  font-size: 8pt;
+  color: #4b5563;
+}
+
+.address-grid {
+  display: grid;
+  grid-template-columns: 1fr 70mm;
+  gap: 10mm;
+  align-items: start;
+  margin-bottom: 10mm;
+}
+
+.address .return-line {
+  margin-bottom: 1.5mm;
+  font-size: 7pt;
+  color: #6b7280;
+  text-decoration: underline;
+}
+
+.meta-table th,
+.meta-table td {
+  padding: 0.8mm 0;
+  text-align: left;
+  font-size: 9pt;
+}
+
+.meta-table th {
+  font-weight: 400;
+  color: #6b7280;
+}
+
+.meta-table td {
+  text-align: right;
+  font-weight: 600;
+}
+
+.doc-table {
+  margin: 4mm 0 6mm;
+  font-size: 9pt;
+}
+
+.doc-table th,
+.doc-table td {
+  padding: 2mm 2.5mm;
+  border-bottom: 0.2mm solid #d1d5db;
+  text-align: left;
+  vertical-align: top;
+}
+
+.doc-table thead th,
+.doc-table .repeat-head th {
+  background: #111827;
+  color: #ffffff;
+  font-weight: 600;
+  border-bottom: 0;
+}
+
+.doc-table thead th.num,
+.doc-table .repeat-head th.num,
+.doc-table td.num,
+.doc-table tfoot td.num {
+  text-align: right;
+}
+
+.doc-table tfoot td {
+  font-weight: 700;
+  border-top: 0.4mm solid #111827;
+  border-bottom: 0;
+}
+
+.doc-table .col-pos {
+  width: 11mm;
+}
+
+.totals {
+  width: 80mm;
+  margin: 0 0 6mm auto;
+  font-size: 10pt;
+}
+
+.totals td {
+  padding: 1.2mm 0;
+}
+
+.totals tr.grand td {
+  padding-top: 2mm;
+  border-top: 0.4mm solid #111827;
+  font-size: 12pt;
+  font-weight: 700;
+}
+
+.doc-note {
+  margin: 4mm 0;
+  padding: 3mm 4mm;
+  border-left: 1mm solid #f59e0b;
+  background: #fffbeb;
+  font-size: 9pt;
+}
+
+.signature-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20mm;
+  margin-top: 16mm;
+}
+
+.signature-line {
+  padding-top: 1.5mm;
+  border-top: 0.3mm solid #111827;
+  font-size: 8.5pt;
+}
+
+/* Contract: clause numbering via CSS counter. Optional sections
+   ({{#if}}) therefore shift the numbers automatically. */
+.document--contract {
+  counter-reset: clause;
+}
+
+.document--contract h2 {
+  counter-increment: clause;
+}
+
+.document--contract h2::before {
+  content: counter(clause) ".\00a0\00a0";
+}
+
+/* --- 3b. Form fields ---------------------------------------------------------------
+   Preview: placeholder boxes. PDF: the same boxes as links; Chromium writes their
+   position/size into the PDF, then pdf-lib creates the real form field there (see
+   lib/acroform.ts). In print the boxes are therefore transparent. */
+.ff {
+  display: inline-block;
+  box-sizing: border-box;
+  max-width: 100%;
+  vertical-align: middle;
+  border: 0.25mm solid #7c8798;
+  border-radius: 0.6mm;
+  background: #eef3fd;
+  color: inherit;
+  text-decoration: none;
+}
+
+.ff-radio {
+  border-radius: 50%;
+}
+
+.ff-dropdown {
+  position: relative;
+}
+
+.ff-dropdown::after {
+  content: "▾";
+  position: absolute;
+  top: 50%;
+  right: 1.4mm;
+  transform: translateY(-50%);
+  font-size: 8pt;
+  line-height: 1;
+  color: #4b5563;
+}
+
+.ff-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e0e5f2;
+  font-size: 10pt;
+  font-weight: 600;
+}
+
+.ff-signature {
+  position: relative;
+  margin-bottom: 5mm;
+  border-width: 0 0 0.3mm;
+  border-color: #374151;
+  border-radius: 0;
+}
+
+.ff-signature::after {
+  content: attr(data-label);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.8mm;
+  font-size: 8pt;
+  line-height: 1.2;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.ff-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5mm;
+  margin-right: 4mm;
+  vertical-align: middle;
+  white-space: nowrap;
+  break-inside: avoid;
+}
+
+.ff-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  vertical-align: middle;
+}
+
+.ff-group--vertical {
+  flex-direction: column;
+  gap: 1.5mm;
+}
+
+.ff-group--vertical .ff-item {
+  margin-right: 0;
+}
+
+@media print {
+  .ff {
+    background: transparent;
+    border-color: transparent;
+  }
+
+  .ff-dropdown::after {
+    display: none;
+  }
+
+  .ff-signature {
+    border-bottom-color: #374151;
+  }
+}
+
+/* --- 4. Screen: simulate pages ------------------------------------------------ */
+@media screen {
+  /* Preview page margins. The HTML overrides them per document (lib/page-decor.ts);
+     in the PDF the @page rule applies instead, with the same values. */
+  :root {
+    --page-margin-top: 20mm;
+    --page-margin-right: 15mm;
+    --page-margin-bottom: 20mm;
+    --page-margin-left: 15mm;
+    --page-content-width: calc(210mm - var(--page-margin-left) - var(--page-margin-right));
+    --page-content-height: calc(297mm - var(--page-margin-top) - var(--page-margin-bottom));
+  }
+
+  html {
+    overflow: hidden; /* the iframe is stretched to content height; scrollbars would distort the measurement */
+  }
+
+  /* Page view: transparent so the app's desk background shows through */
+  body.is-preview {
+    background: transparent;
+  }
+
+  body.is-compact {
+    background: #ffffff;
+  }
+
+  /* Compact preview (block library): one continuous strip without pages */
+  .is-compact .document {
+    width: 210mm;
+    padding: 6mm 15mm;
+  }
+
+  /* Flow = columns. Each column is as large as the content area of a PDF page
+     (A4 minus page margins). Overflowing columns appear to the right;
+     paginate.ts cuts them into sheets. */
+  .is-preview:not(.is-compact) .document {
+    width: var(--page-content-width);
+    height: var(--page-content-height);
+    column-width: var(--page-content-width);
+    column-gap: 20mm;
+    column-fill: auto;
+  }
+
+  /* Hide the raw column flow until paginate.ts has run. */
+  .is-preview:not(.is-compact):not(.is-paginated) .document {
+    visibility: hidden;
+  }
+
+  /* In the column flow a forced page break equals a column break. */
+  .page-break-before {
+    break-before: column;
+  }
+
+  .page-break-after {
+    break-after: column;
+  }
+
+  /* Copy of the table header inserted by paginate.ts at the top of a page (Chromium repeats
+     thead only in print, not in columns). */
+  .repeat-head-first {
+    break-before: column;
+  }
+
+  .pages {
+    padding: 12px 0;
+  }
+
+  /* One A4 sheet with the real page margins. */
+  .sheet {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    margin: 0 auto 12mm;
+    padding: var(--page-margin-top) var(--page-margin-right) var(--page-margin-bottom) var(--page-margin-left);
+    background: #ffffff;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.06),
+      0 2px 10px rgba(0, 0, 0, 0.18);
+  }
+
+  .sheet:last-child {
+    margin-bottom: 0;
+  }
+
+  .sheet::after {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -8mm;
+    text-align: center;
+    font: 600 7pt/1 Arial, sans-serif;
+    color: #6b7280;
+  }
+
+  .sheet-body {
+    width: var(--page-content-width);
+    height: var(--page-content-height);
+    overflow: hidden;
+  }
+
+  /* Header and footer in the page margin. Matches the @page margin boxes in the PDF: three slots
+     (left, center, right), content centered in the margin. Without a center slot, left
+     and right share the width by content (long text does not wrap prematurely). */
+  .sheet-band {
+    position: absolute;
+    left: var(--page-margin-left);
+    right: var(--page-margin-right);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4mm;
+    font: 8pt/1.3 Arial, "Liberation Sans", Helvetica, sans-serif;
+    color: #4b5563;
+  }
+
+  .sheet-band:has(.slot-center:not(:empty)) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+
+  .slot {
+    min-width: 0;
+  }
+
+  .slot-center:empty {
+    display: none;
+  }
+
+  .slot-right {
+    margin-left: auto;
+  }
+
+  .sheet-header {
+    top: 0;
+    height: var(--page-margin-top);
+  }
+
+  .sheet-footer {
+    bottom: 0;
+    height: var(--page-margin-bottom);
+  }
+
+  .slot-left {
+    text-align: left;
+  }
+
+  .slot-center {
+    text-align: center;
+  }
+
+  .slot-right {
+    text-align: right;
+  }
+}
+
+/* --- 5. PDF: page margins come from @page, so no extra padding ----------- */
+@media print {
+  .document {
+    padding: 0;
+  }
+}
