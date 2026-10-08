@@ -5,15 +5,13 @@
 
 # docgen-kit
 
-![Live editor with template on the left and A4 preview on the right](docs/screenshots/02-invoice-editor.png)
-
 Template-driven PDF documents for the web: write a **Handlebars** template, preview it live as real A4 sheets in the browser, render the PDF on the server with **Gotenberg** (headless Chromium) and optionally add **fillable AcroForm fields** with pdf-lib.
 
 The library is framework-agnostic and split into four entry points, so you only pull in what you need. The [`demo/`](demo) folder is a complete Next.js application built on top of it (editor, block library, page layout, form fields).
 
+![Live editor with template on the left and A4 preview on the right](docs/screenshots/02-invoice-editor.png)
 
 > **Note on sample data:** all names, companies, addresses, e-mail addresses, bank details and other data in the demo and in the screenshots are **fictional** and were made up for demonstration. Any resemblance to real persons (living or dead), companies or other entities is entirely coincidental and unintended. See [Disclaimer](#disclaimer).
-
 
 **Contributions are welcome.** Pull requests, bug reports and ideas are happily accepted. Run `npm run check` before opening a PR; for larger changes, please open an issue first so we can talk it through.
 
